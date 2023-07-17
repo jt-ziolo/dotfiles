@@ -1,0 +1,32 @@
+:arrow_up: chore(dependencies)!: drop support for Node 6
+##################################################<-_50_chars,_ignoring_emoji_if_present
+#  Above: REQUIRED
+#  Use present imperative tense, like you are 
+#  giving a command
+#  No punctuation
+#  <type><(scope)><!>: summary
+#  types: fix, feat, build, chore, ci, docs, 
+#    style, refactor, perf, test
+#  emojis: https://gitmoji.dev/
+#  ! is included if this is a breaking change
+#    also include the footer if necessary
+##################################################
+#  Below: OPTIONAL
+#  Remember blank line between title and body.
+#  Body: Explain *what* and *why* (not *how*).
+#  Include task ID if there is one.
+#    Jira issue fmt: ABC-123
+#    GitHub issue fmt: GitHub #123
+#    https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue
+#  Don't worry about character limit below
+##################################################
+#
+# ABC-123 Drop support for Node 6. Refactor related code to work without Node 6.
+# 
+# BREAKING CHANGE: use Javascript features not available in Node 6
+# 
+# Co-authored-by: John "JD" Doe <johndoe@users.noreply.github.com>
+# 
+##################################################
+#  git standard message follows
+##################################################

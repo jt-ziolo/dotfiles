@@ -1,0 +1,356 @@
+#
+# ~/.bashrc
+#
+
+[[ $- != *i* ]] && return
+
+colors() {
+	local fgc bgc vals seq0
+
+	printf "Color escapes are %s\n" '\e[${value};...;${value}m'
+	printf "Values 30..37 are \e[33mforeground colors\e[m\n"
+	printf "Values 40..47 are \e[43mbackground colors\e[m\n"
+	printf "Value  1 gives a  \e[1mbold-faced look\e[m\n\n"
+
+	# foreground colors
+	for fgc in {30..37}; do
+		# background colors
+		for bgc in {40..47}; do
+			fgc=${fgc#37} # white
+			bgc=${bgc#40} # black
+
+			vals="${fgc:+$fgc;}${bgc}"
+			vals=${vals%%;}
+
+			seq0="${vals:+\e[${vals}m}"
+			printf "  %-9s" "${seq0:-(default)}"
+			printf " ${seq0}TEXT\e[m"
+			printf " \e[${vals:+${vals+$vals;}}1mBOLD\e[m"
+		done
+		echo; echo
+	done
+}
+
+[ -r /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion
+
+# Change the window title of X terminals
+case ${TERM} in
+	xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|interix|konsole*)
+		PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+		;;
+	screen*)
+		PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+		;;
+esac
+
+use_color=true
+
+# Set colorful PS1 only on colorful terminals.
+# dircolors --print-database uses its own built-in database
+# instead of using /etc/DIR_COLORS.  Try to use the external file
+# first to take advantage of user additions.  Use internal bash
+# globbing instead of external grep binary.
+safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
+match_lhs=""
+[[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
+[[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
+[[ -z ${match_lhs}    ]] \
+	&& type -P dircolors >/dev/null \
+	&& match_lhs=$(dircolors --print-database)
+[[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
+
+if ${use_color} ; then
+	# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
+	if type -P dircolors >/dev/null ; then
+		if [[ -f ~/.dir_colors ]] ; then
+			eval $(dircolors -b ~/.dir_colors)
+		elif [[ -f /etc/DIR_COLORS ]] ; then
+			eval $(dircolors -b /etc/DIR_COLORS)
+		fi
+	fi
+
+	if [[ ${EUID} == 0 ]] ; then
+		# Root
+		PS1='\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] '
+	else
+		# Non-Root
+		# PS1='\[\033[01;32m\][\u@\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] '
+		PS1='\[\033[01;32m\][\u\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] '
+	fi
+
+	alias ls='ls --color=auto'
+	alias grep='grep --colour=auto'
+	alias egrep='egrep --colour=auto'
+	alias fgrep='fgrep --colour=auto'
+else
+	if [[ ${EUID} == 0 ]] ; then
+		# show root@ when we don't have colors
+		PS1='\u@\h \W \$ '
+	else
+		PS1='\u@\h \w \$ '
+	fi
+fi
+
+unset use_color safe_term match_lhs sh
+
+alias cp="cp -i"                          # confirm before overwriting something
+alias df='df -h'                          # human-readable sizes
+alias free='free -m'                      # show sizes in MB
+#alias np='nano -w PKGBUILD'
+#alias more=less
+
+# Set vim as the default editor
+if [ -f "~/bin/nvim" ] ; then
+  export VISUAL=nvim
+else
+  export VISUAL=vim
+fi
+export EDITOR="$VISUAL"
+
+xhost +local:root > /dev/null 2>&1
+
+# Bash won't get SIGWINCH if another process is in the foreground.
+# Enable checkwinsize so that bash will check the terminal size when
+# it regains control.  #65623
+# http://cnswww.cns.cwru.edu/~chet/bash/FAQ (E11)
+shopt -s checkwinsize
+
+shopt -s expand_aliases
+
+# export QT_SELECT=4
+
+# Enable history appending instead of overwriting.  #139609
+shopt -s histappend
+
+#
+# # ex - archive extractor
+# # usage: ex <file>
+ex ()
+{
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xjf $1   ;;
+      *.tar.gz)    tar xzf $1   ;;
+      *.bz2)       bunzip2 $1   ;;
+      *.rar)       unrar x $1     ;;
+      *.gz)        gunzip $1    ;;
+      *.tar)       tar xf $1    ;;
+      *.tbz2)      tar xjf $1   ;;
+      *.tgz)       tar xzf $1   ;;
+      *.zip)       unzip $1     ;;
+      *.Z)         uncompress $1;;
+      *.7z)        7z x $1      ;;
+      *)           echo "'$1' cannot be extracted via ex()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+# Aliases / Functions
+# --------------------
+
+function restart() {
+  reboot
+}
+
+## change internet service (works on vbox)
+## e.g. inter_set on; inter_set off
+function inter_set() {
+  nmcli networking "$1"
+}
+
+## move file to new folder in repos and cd into it
+function reposetup() {
+  mkdir -p "$HOME/Repos/TempFolderName" &&
+  mv "$1" "$HOME/Repos/TempFolderName/" &&
+  f="$(basename -- $1)" &&
+  unzip "$HOME/Repos/TempFolderName/$f" -d "$HOME/Repos/TempFolderName" &&
+  cd "$HOME/Repos/TempFolderName" &&
+  git init &&
+  git status
+}
+
+## Backup before editing, deletion, etc.
+## https://unix.stackexchange.com/a/544947
+## Note that you have a trash utility installed
+## named "trash"
+function backup () {
+  mkdir -p "$HOME/.BACKUP" &&
+  cp -i "$1" "$HOME/.BACKUP"
+}
+
+function backupdir () {
+  cp -ir "$1" "$HOME/.BACKUP/$1"
+}
+
+function dotstatus() {
+  git -C "$HOME" status
+}
+
+## Open file manager
+function fm() {
+  # thunar
+  pcmanfm-qt
+}
+
+## Calculator
+## from Arch Linux wiki
+function calc() {
+    echo "scale=3;$@" | bc -l
+}
+
+function config () {
+  cd ~/.config &&
+  ls -all
+}
+
+function inter_info() {
+  curl ipinfo.io/ip &&
+  ping google.com
+}
+
+function bashsrc () {
+  source ~/.bashrc &&
+  echo Updated bash aliases
+}
+
+## from Arch Linux wiki
+## trap the output run after EC (error control)
+## usage: trap EC <command>
+## from Arch Linux wiki
+function EC() {
+	echo -e '\e[1;33m'code $?'\e[m\n'
+}
+
+# redshift
+function redshift_night() {
+	redshift -P -O 3000
+}
+function redshift_day() {
+	redshift -P -O 6500
+}
+
+# Audio
+function audio() {
+	pavucontrol-qt
+}
+
+# Video
+# Only run once per session
+function start-video() {
+	sudo modprobe v4l2loopback
+}
+
+# sleep
+function gotosleep() {
+	systemctl suspend
+}
+
+function imgsize() {
+	convert "$1" -print "Size: %wx%h\n" /dev/null
+}
+
+function licenses() {
+	printf 'Production library summary:\n'
+	license-checker --production --summary
+	printf 'Development library summary:\n'
+	license-checker --development --summary
+}
+
+exercism () {
+    local out
+    readarray -t out < <(command exercism "$@")
+    printf '%s\n' "${out[@]}"
+    if [[ $1 == "download" && -d "${out[-1]}" ]]; then
+        cd "${out[-1]}" || return 1
+    fi
+}
+
+function sysinfo() {
+  local uname_output
+  uname_output=$(uname -s -n -r -m -p -i -o)
+  echo "System Information:"
+  echo "-------------------"
+
+  # Regular expressions to extract information
+  regex_kernel='^([^[:space:]]+)'
+  regex_host='[^[:space:]]+ ([^[:space:]]+)'
+  regex_release='[^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+  regex_version='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+  regex_hardware='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+  regex_processor='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+  regex_os='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+
+  if [[ $uname_output =~ $regex_kernel ]]; then
+    echo "Kernel name: ${BASH_REMATCH[1]}"
+  fi
+  if [[ $uname_output =~ $regex_host ]]; then
+    echo "Network node hostname: ${BASH_REMATCH[1]}"
+  fi
+  if [[ $uname_output =~ $regex_release ]]; then
+    echo "Kernel release: ${BASH_REMATCH[1]}"
+  fi
+  if [[ $uname_output =~ $regex_version ]]; then
+    echo "Kernel version: ${BASH_REMATCH[1]}"
+  fi
+  if [[ $uname_output =~ $regex_hardware ]]; then
+    echo "Machine hardware name: ${BASH_REMATCH[1]}"
+  fi
+  if [[ $uname_output =~ $regex_processor ]]; then
+    echo "Processor type: ${BASH_REMATCH[1]}"
+  fi
+  if [[ $uname_output =~ $regex_os ]]; then
+    echo "Operating system: ${BASH_REMATCH[1]}"
+  fi
+}
+
+# fzf
+## install based on pacman search, with preview
+## from Arch Linux wiki
+function fzfpac () {
+  pacman -Slq | fzf --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S
+}
+source /usr/share/doc/fzf/examples/key-bindings.bash
+
+# fnm - node version manager
+export PATH="/home/jt/.local/share/fnm:$PATH"
+eval "$(fnm env --use-on-cd)"
+function add_node_v() {
+  node --version > .node-version
+}
+# eval "`fnm env`"
+# . "$HOME/.cargo/env"
+# Install Ruby Gems to ~/gems
+export GEM_HOME="$HOME/gems"
+export PATH="$HOME/gems/bin:$PATH"
+
+source ~/.bash_completion/alacritty
+
+# pnpm
+export PNPM_HOME="/home/jt/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# flutter and dart
+export PATH="$PATH:$HOME/snap/flutter/common/flutter/bin"
+
+# dotnet
+export DOTNET_ROOT="/usr/lib/dotnet"
+export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT
+# opt out of telemetry
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+# bash parameter completion for the dotnet CLI
+function _dotnet_bash_complete()
+{
+  local cur="${COMP_WORDS[COMP_CWORD]}" IFS=$'\n' # On Windows you may need to use use IFS=$'\r\n'
+  local candidates
+
+  read -d '' -ra candidates < <(dotnet complete --position "${COMP_POINT}" "${COMP_LINE}" 2>/dev/null)
+
+  read -d '' -ra COMPREPLY < <(compgen -W "${candidates[*]:-}" -- "$cur")
+}
+complete -f -F _dotnet_bash_complete dotnet

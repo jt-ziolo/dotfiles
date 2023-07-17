@@ -1,0 +1,8 @@
+! Pause: set as modifier (mod3)
+! set mod3 to Pause key, so I can use it as i3 modifier
+clear shift
+clear mod3
+keycode 62 = Shift_R NoSymbol Shift_R
+keycode 50 = Shift_L NoSymbol Shift_L
+add shift = Shift_L
+add mod3 = Shift_R

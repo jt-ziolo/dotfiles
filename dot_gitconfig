@@ -1,0 +1,36 @@
+[user]
+	name = JT Ziolo
+	email = ziolojt@gmail.com
+[init]
+	defaultBranch = main
+	templatedir = /home/jt/.git_template
+[commit]
+	gpgsign = true
+	template = /home/jt/.config/.gitmessage
+[alias]
+	alias = "!git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /"
+	diff-nvim = "difftool -t nvimdiff -y"
+	diff-rec = "diff --submodule=diff"
+	diff-word = "diff --word-diff"
+	discard = "!git checkout -- . && git submodule foreach git checkout -- ."
+	log1 = "log --oneline"
+	loglast = "log -1 HEAD --stat"
+	remotes = "remote -v"
+	search = "!git rev-list --all | xargs git grep -F"
+	stat = "status -sb"
+	subup = "submodule update --init --recursive"
+	trackadd = "!git add --intent-to-add . && git add -p"
+	unstage = "!git restore --staged $1"
+	who = "!git config -l | grep user"
+	wt-add = "worktree add"
+	wt-clone = "!sh $HOME/git-clone-bare-for-worktrees.sh"
+	wt-clone-local = "!sh $HOME/git-clone-bare-for-worktrees.sh $(pwd)/$1 $2"
+	wt-list = "worktree list"
+	wt-rm = "worktree remove"
+[gc]
+	reflogExpire = 200
+	reflogExpireUnreachable = 90
+[privacy]
+	pattern = hms
+[core]
+	editor = nvim

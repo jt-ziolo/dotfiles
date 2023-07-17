@@ -1,0 +1,20 @@
+# Import
+snippet ir import React
+	import React from 'react';
+
+snippet irh import React hooks
+	import { use$1 } from 'react';
+
+# Interface
+snippet pi props interface
+	export interface $1Props extends ComponentPropsWithoutRef<'div'> {
+		className?: string;
+		children?: ReactNode;
+	};
+
+# FC
+snippet fc functional component
+	const $1: FC<$1Props> = ({ className, children }) => {
+		return <div className={className}>{children}</div>;
+	};
+	export default $1;
