@@ -27,7 +27,8 @@ colors() {
 			printf " ${seq0}TEXT\e[m"
 			printf " \e[${vals:+${vals+$vals;}}1mBOLD\e[m"
 		done
-		echo; echo
+		echo
+		echo
 	done
 }
 
@@ -35,12 +36,12 @@ colors() {
 
 # Change the window title of X terminals
 case ${TERM} in
-	xterm*|rxvt*|Eterm*|aterm|kterm|gnome*|interix|konsole*)
-		PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
-		;;
-	screen*)
-		PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
-		;;
+xterm* | rxvt* | Eterm* | aterm | kterm | gnome* | interix | konsole*)
+	PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007"'
+	;;
+screen*)
+	PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\033\\"'
+	;;
 esac
 
 use_color=true
@@ -50,26 +51,26 @@ use_color=true
 # instead of using /etc/DIR_COLORS.  Try to use the external file
 # first to take advantage of user additions.  Use internal bash
 # globbing instead of external grep binary.
-safe_term=${TERM//[^[:alnum:]]/?}   # sanitize TERM
+safe_term=${TERM//[^[:alnum:]]/?} # sanitize TERM
 match_lhs=""
-[[ -f ~/.dir_colors   ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
+[[ -f ~/.dir_colors ]] && match_lhs="${match_lhs}$(<~/.dir_colors)"
 [[ -f /etc/DIR_COLORS ]] && match_lhs="${match_lhs}$(</etc/DIR_COLORS)"
-[[ -z ${match_lhs}    ]] \
-	&& type -P dircolors >/dev/null \
-	&& match_lhs=$(dircolors --print-database)
+[[ -z ${match_lhs} ]] &&
+	type -P dircolors >/dev/null &&
+	match_lhs=$(dircolors --print-database)
 [[ $'\n'${match_lhs} == *$'\n'"TERM "${safe_term}* ]] && use_color=true
 
-if ${use_color} ; then
+if ${use_color}; then
 	# Enable colors for ls, etc.  Prefer ~/.dir_colors #64489
-	if type -P dircolors >/dev/null ; then
-		if [[ -f ~/.dir_colors ]] ; then
+	if type -P dircolors >/dev/null; then
+		if [[ -f ~/.dir_colors ]]; then
 			eval $(dircolors -b ~/.dir_colors)
-		elif [[ -f /etc/DIR_COLORS ]] ; then
+		elif [[ -f /etc/DIR_COLORS ]]; then
 			eval $(dircolors -b /etc/DIR_COLORS)
 		fi
 	fi
 
-	if [[ ${EUID} == 0 ]] ; then
+	if [[ ${EUID} == 0 ]]; then
 		# Root
 		PS1='\[\033[01;31m\][\h\[\033[01;36m\] \W\[\033[01;31m\]]\$\[\033[00m\] '
 	else
@@ -83,7 +84,7 @@ if ${use_color} ; then
 	alias egrep='egrep --colour=auto'
 	alias fgrep='fgrep --colour=auto'
 else
-	if [[ ${EUID} == 0 ]] ; then
+	if [[ ${EUID} == 0 ]]; then
 		# show root@ when we don't have colors
 		PS1='\u@\h \W \$ '
 	else
@@ -93,21 +94,21 @@ fi
 
 unset use_color safe_term match_lhs sh
 
-alias cp="cp -i"                          # confirm before overwriting something
-alias df='df -h'                          # human-readable sizes
-alias free='free -m'                      # show sizes in MB
+alias cp="cp -i"     # confirm before overwriting something
+alias df='df -h'     # human-readable sizes
+alias free='free -m' # show sizes in MB
 #alias np='nano -w PKGBUILD'
 #alias more=less
 
 # Set vim as the default editor
-if [ -f "~/bin/nvim" ] ; then
-  export VISUAL=nvim
+if [ -f "~/bin/nvim" ]; then
+	export VISUAL=nvim
 else
-  export VISUAL=vim
+	export VISUAL=vim
 fi
 export EDITOR="$VISUAL"
 
-xhost +local:root > /dev/null 2>&1
+xhost +local:root >/dev/null 2>&1
 
 # Bash won't get SIGWINCH if another process is in the foreground.
 # Enable checkwinsize so that bash will check the terminal size when
@@ -125,94 +126,89 @@ shopt -s histappend
 #
 # # ex - archive extractor
 # # usage: ex <file>
-ex ()
-{
-  if [ -f $1 ] ; then
-    case $1 in
-      *.tar.bz2)   tar xjf $1   ;;
-      *.tar.gz)    tar xzf $1   ;;
-      *.bz2)       bunzip2 $1   ;;
-      *.rar)       unrar x $1     ;;
-      *.gz)        gunzip $1    ;;
-      *.tar)       tar xf $1    ;;
-      *.tbz2)      tar xjf $1   ;;
-      *.tgz)       tar xzf $1   ;;
-      *.zip)       unzip $1     ;;
-      *.Z)         uncompress $1;;
-      *.7z)        7z x $1      ;;
-      *)           echo "'$1' cannot be extracted via ex()" ;;
-    esac
-  else
-    echo "'$1' is not a valid file"
-  fi
+ex() {
+	if [ -f $1 ]; then
+		case $1 in
+		*.tar.bz2) tar xjf $1 ;;
+		*.tar.gz) tar xzf $1 ;;
+		*.bz2) bunzip2 $1 ;;
+		*.rar) unrar x $1 ;;
+		*.gz) gunzip $1 ;;
+		*.tar) tar xf $1 ;;
+		*.tbz2) tar xjf $1 ;;
+		*.tgz) tar xzf $1 ;;
+		*.zip) unzip $1 ;;
+		*.Z) uncompress $1 ;;
+		*.7z) 7z x $1 ;;
+		*) echo "'$1' cannot be extracted via ex()" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
 }
 
 # Aliases / Functions
 # --------------------
 
 function restart() {
-  reboot
+	reboot
 }
 
 ## change internet service (works on vbox)
 ## e.g. inter_set on; inter_set off
 function inter_set() {
-  nmcli networking "$1"
+	nmcli networking "$1"
 }
 
 ## move file to new folder in repos and cd into it
 function reposetup() {
-  mkdir -p "$HOME/Repos/TempFolderName" &&
-  mv "$1" "$HOME/Repos/TempFolderName/" &&
-  f="$(basename -- $1)" &&
-  unzip "$HOME/Repos/TempFolderName/$f" -d "$HOME/Repos/TempFolderName" &&
-  cd "$HOME/Repos/TempFolderName" &&
-  git init &&
-  git status
+	mkdir -p "$HOME/Repos/TempFolderName" &&
+		mv "$1" "$HOME/Repos/TempFolderName/" &&
+		f="$(basename -- $1)" &&
+		unzip "$HOME/Repos/TempFolderName/$f" -d "$HOME/Repos/TempFolderName" &&
+		cd "$HOME/Repos/TempFolderName" &&
+		git init &&
+		git status
 }
 
 ## Backup before editing, deletion, etc.
 ## https://unix.stackexchange.com/a/544947
 ## Note that you have a trash utility installed
 ## named "trash"
-function backup () {
-  mkdir -p "$HOME/.BACKUP" &&
-  cp -i "$1" "$HOME/.BACKUP"
+function backup() {
+	mkdir -p "$HOME/.BACKUP" &&
+		cp -i "$1" "$HOME/.BACKUP"
 }
 
-function backupdir () {
-  cp -ir "$1" "$HOME/.BACKUP/$1"
-}
-
-function dotstatus() {
-  git -C "$HOME" status
+function backupdir() {
+	cp -ir "$1" "$HOME/.BACKUP/$1"
 }
 
 ## Open file manager
 function fm() {
-  # thunar
-  pcmanfm-qt
+	# thunar
+	pcmanfm-qt
 }
 
 ## Calculator
 ## from Arch Linux wiki
 function calc() {
-    echo "scale=3;$@" | bc -l
+	echo "scale=3;$@" | bc -l
 }
 
-function config () {
-  cd ~/.config &&
-  ls -all
+function config() {
+	cd ~/.config &&
+		ls -all
 }
 
 function inter_info() {
-  curl ipinfo.io/ip &&
-  ping google.com
+	curl ipinfo.io/ip &&
+		ping google.com
 }
 
-function bashsrc () {
-  source ~/.bashrc &&
-  echo Updated bash aliases
+function bashsrc() {
+	source ~/.bashrc &&
+		echo Updated bash aliases
 }
 
 ## from Arch Linux wiki
@@ -258,58 +254,58 @@ function licenses() {
 	license-checker --development --summary
 }
 
-exercism () {
-    local out
-    readarray -t out < <(command exercism "$@")
-    printf '%s\n' "${out[@]}"
-    if [[ $1 == "download" && -d "${out[-1]}" ]]; then
-        cd "${out[-1]}" || return 1
-    fi
+exercism() {
+	local out
+	readarray -t out < <(command exercism "$@")
+	printf '%s\n' "${out[@]}"
+	if [[ $1 == "download" && -d "${out[-1]}" ]]; then
+		cd "${out[-1]}" || return 1
+	fi
 }
 
 function sysinfo() {
-  local uname_output
-  uname_output=$(uname -s -n -r -m -p -i -o)
-  echo "System Information:"
-  echo "-------------------"
+	local uname_output
+	uname_output=$(uname -s -n -r -m -p -i -o)
+	echo "System Information:"
+	echo "-------------------"
 
-  # Regular expressions to extract information
-  regex_kernel='^([^[:space:]]+)'
-  regex_host='[^[:space:]]+ ([^[:space:]]+)'
-  regex_release='[^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
-  regex_version='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
-  regex_hardware='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
-  regex_processor='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
-  regex_os='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+	# Regular expressions to extract information
+	regex_kernel='^([^[:space:]]+)'
+	regex_host='[^[:space:]]+ ([^[:space:]]+)'
+	regex_release='[^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+	regex_version='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+	regex_hardware='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+	regex_processor='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
+	regex_os='[^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ [^[:space:]]+ ([^[:space:]]+)'
 
-  if [[ $uname_output =~ $regex_kernel ]]; then
-    echo "Kernel name: ${BASH_REMATCH[1]}"
-  fi
-  if [[ $uname_output =~ $regex_host ]]; then
-    echo "Network node hostname: ${BASH_REMATCH[1]}"
-  fi
-  if [[ $uname_output =~ $regex_release ]]; then
-    echo "Kernel release: ${BASH_REMATCH[1]}"
-  fi
-  if [[ $uname_output =~ $regex_version ]]; then
-    echo "Kernel version: ${BASH_REMATCH[1]}"
-  fi
-  if [[ $uname_output =~ $regex_hardware ]]; then
-    echo "Machine hardware name: ${BASH_REMATCH[1]}"
-  fi
-  if [[ $uname_output =~ $regex_processor ]]; then
-    echo "Processor type: ${BASH_REMATCH[1]}"
-  fi
-  if [[ $uname_output =~ $regex_os ]]; then
-    echo "Operating system: ${BASH_REMATCH[1]}"
-  fi
+	if [[ $uname_output =~ $regex_kernel ]]; then
+		echo "Kernel name: ${BASH_REMATCH[1]}"
+	fi
+	if [[ $uname_output =~ $regex_host ]]; then
+		echo "Network node hostname: ${BASH_REMATCH[1]}"
+	fi
+	if [[ $uname_output =~ $regex_release ]]; then
+		echo "Kernel release: ${BASH_REMATCH[1]}"
+	fi
+	if [[ $uname_output =~ $regex_version ]]; then
+		echo "Kernel version: ${BASH_REMATCH[1]}"
+	fi
+	if [[ $uname_output =~ $regex_hardware ]]; then
+		echo "Machine hardware name: ${BASH_REMATCH[1]}"
+	fi
+	if [[ $uname_output =~ $regex_processor ]]; then
+		echo "Processor type: ${BASH_REMATCH[1]}"
+	fi
+	if [[ $uname_output =~ $regex_os ]]; then
+		echo "Operating system: ${BASH_REMATCH[1]}"
+	fi
 }
 
 # fzf
 ## install based on pacman search, with preview
 ## from Arch Linux wiki
-function fzfpac () {
-  pacman -Slq | fzf --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S
+function fzfpac() {
+	pacman -Slq | fzf --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S
 }
 source /usr/share/doc/fzf/examples/key-bindings.bash
 
@@ -317,7 +313,7 @@ source /usr/share/doc/fzf/examples/key-bindings.bash
 export PATH="/home/jt/.local/share/fnm:$PATH"
 eval "$(fnm env --use-on-cd)"
 function add_node_v() {
-  node --version > .node-version
+	node --version >.node-version
 }
 # eval "`fnm env`"
 # . "$HOME/.cargo/env"
@@ -330,8 +326,8 @@ source ~/.bash_completion/alacritty
 # pnpm
 export PNPM_HOME="/home/jt/.local/share/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
@@ -344,13 +340,20 @@ export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT
 # opt out of telemetry
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # bash parameter completion for the dotnet CLI
-function _dotnet_bash_complete()
-{
-  local cur="${COMP_WORDS[COMP_CWORD]}" IFS=$'\n' # On Windows you may need to use use IFS=$'\r\n'
-  local candidates
+function _dotnet_bash_complete() {
+	local cur="${COMP_WORDS[COMP_CWORD]}" IFS=$'\n' # On Windows you may need to use use IFS=$'\r\n'
+	local candidates
 
-  read -d '' -ra candidates < <(dotnet complete --position "${COMP_POINT}" "${COMP_LINE}" 2>/dev/null)
+	read -d '' -ra candidates < <(dotnet complete --position "${COMP_POINT}" "${COMP_LINE}" 2>/dev/null)
 
-  read -d '' -ra COMPREPLY < <(compgen -W "${candidates[*]:-}" -- "$cur")
+	read -d '' -ra COMPREPLY < <(compgen -W "${candidates[*]:-}" -- "$cur")
 }
 complete -f -F _dotnet_bash_complete dotnet
+
+# k8s
+function kubectl() {
+	minikube kubectl -- "$1"
+}
+
+# docker rootless
+export PATH=/usr/bin:$PATH

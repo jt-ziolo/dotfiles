@@ -51,7 +51,7 @@ window:
   # Blank space added around the window in pixels. This padding is scaled
   # by DPI and the specified value is always added at both opposing sides.
   padding:
-    x: 8
+    x: 16
     y: 8
 
   # Spread additional padding evenly around the terminal content.
@@ -778,6 +778,7 @@ key_bindings:
   - {key: I, mods: Control|Shift, chars: "\x1b[73;5u"}
   - {key: O, mods: Control|Shift, chars: "\x1b[79;5u"}
   - {key: P, mods: Control|Shift, chars: "\x1b[80;5u"}
+  - {key: E, mods: Control|Shift, chars: "\x1b[69;5u"}
   #- { key: Paste,                                       action: Paste          }
   #- { key: Copy,                                        action: Copy           }
   #- { key: L,         mods: Control,                    action: ClearLogNotice }

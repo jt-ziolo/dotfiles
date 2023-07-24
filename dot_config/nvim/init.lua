@@ -32,6 +32,7 @@ if vim.g.vscode then
 		"derektata/lorem.nvim",
 		"tpope/vim-surround",
 		"tpope/vim-repeat",
+		"numToStr/Comment.nvim",
 
 		-- Remaining entries are marked individually if I am not
 		-- sure that they are working yet
@@ -82,6 +83,7 @@ else
 		"navarasu/onedark.nvim",
 		"dcampos/nvim-snippy",
 		"dcampos/cmp-snippy",
+		"numToStr/Comment.nvim",
 
 		-- Remaining entries are marked individually if I am not
 		-- sure that they are working yet
@@ -264,8 +266,8 @@ else
 			["<C-b>"] = cmp.mapping.scroll_docs(-4),
 			["<C-f>"] = cmp.mapping.scroll_docs(4),
 			["<C-Space>"] = cmp.mapping.complete(),
-			["<C-e>"] = cmp.mapping.abort(),
-			["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+			["<C-c>"] = cmp.mapping.abort(),
+			["<C-e>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
 		}),
 		sources = cmp.config.sources({
 			{ name = "nvim_lsp" },
@@ -307,7 +309,7 @@ else
 	local capabilities = require("cmp_nvim_lsp").default_capabilities()
 	-- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
 	-- require("lspconfig")["cssls"].setup({
-		-- capabilities = capabilities,
+	-- capabilities = capabilities,
 	-- })
 
 	-- LspKind suggestions
@@ -358,7 +360,7 @@ else
 	vim.keymap.set("n", "<C-S-i>", "<cmd>Neoformat<CR>", { desc = "Neoformat" })
 
 	-- Buffer
-	vim.keymap.set("n", "<C-Tab>", "<cmd>bnext<CR>", { desc = "Next buffer" })
+	vim.keymap.set("n", "<c-i>", "<cmd>bnext<CR>", { desc = "Next buffer" })
 
 	-- Telescope keybinds
 	local builtin = require("telescope.builtin")
@@ -375,10 +377,10 @@ else
 	vim.keymap.set("n", "<leader>?", builtin.keymaps, { desc = "TS keymaps" })
 	vim.keymap.set("n", "<leader>r", builtin.lsp_references, { desc = "TS LSP references" })
 	vim.keymap.set("n", "<leader>i", builtin.lsp_implementations, { desc = "TS implementations" })
-	vim.keymap.set("n", "<leader>d", builtin.lsp_type_definitions, { desc = "TS LSP type definition" })
+	-- vim.keymap.set("n", "<leader>d", builtin.lsp_type_definitions, { desc = "TS LSP type definition" })
 
 	-- NvimTree keybinds
-	vim.keymap.set("n", "<leader>f", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
+	vim.keymap.set("n", "<C-S-e>", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle NvimTree" })
 
 	-- Code Actions keybind
 	-- Ctrl+. is not possible, so I changed my VSCode binding to Ctrl+Shift+G
@@ -407,6 +409,7 @@ require("lorem").setup({
 	sentenceLength = "mixed",
 	comma = 0.3,
 })
+require("Comment").setup()
 
 -- Keybinds
 -----------
