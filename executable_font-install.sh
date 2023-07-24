@@ -101,9 +101,17 @@ mkdir "$font_dir/ttf"
 
 mkdir ~/temp
 cd ~/temp
+
 wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/SourceCodePro.zip
-unzip SourceCodePro.zip
-mv *ttf "$font_dir/ttf"
+wget https://github.com/solmatas/BitterPro/files/4696179/ttf.zip
+wget https://github.com/rsms/inter/releases/download/v3.19/Inter-3.19.zip
+
+unzip SourceCodePro.zip # SourceCodePro
+unzip ttf.zip # BitterPro
+unzip Inter-3.19.zip # SourceCodePro
+mv **/Inter.ttf "$font_dir/ttf/Inter.ttf"
+
+mv **/ttf/* "$font_dir/ttf"
 cd ..
 rm -rf ~/temp
 
