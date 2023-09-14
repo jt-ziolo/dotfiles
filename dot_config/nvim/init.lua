@@ -137,6 +137,16 @@ else
 			"chrisgrieser/nvim-various-textobjs",
 			opts = { useDefaultKeymaps = true },
 		},
+		{ -- Not sure if fully functional
+			"bennypowers/nvim-regexplainer",
+			config = function()
+				require("regexplainer").setup({})
+			end,
+			requires = {
+				"nvim-treesitter/nvim-treesitter",
+				"MunifTanjim/nui.nvim",
+			},
+		},
 		{ -- Not sure of full scope of functionality vs. nvim-various-textobjs
 			"echasnovski/mini.nvim",
 			version = false,

@@ -247,6 +247,10 @@ function imgsize() {
 	convert "$1" -print "Size: %wx%h\n" /dev/null
 }
 
+function vpn() {
+	protonvpn-cli "$1"
+}
+
 function licenses() {
 	printf 'Production library summary:\n'
 	license-checker --production --summary

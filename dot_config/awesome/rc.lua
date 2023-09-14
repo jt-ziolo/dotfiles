@@ -178,7 +178,7 @@ awful.screen.connect_for_each_screen(function(s)
     awful.tag.add("Code", { screen = s, layout = awful.layout.layouts[2],})
     awful.tag.add("Notes", { screen = s, layout = awful.layout.layouts[2],})
     awful.tag.add("Read", { screen = s, layout = awful.layout.layouts[2],})
-    awful.tag.add("Floating App", { screen = s, layout = awful.layout.layouts[1],})
+    awful.tag.add("Other (Floating)", { screen = s, layout = awful.layout.layouts[1],})
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
