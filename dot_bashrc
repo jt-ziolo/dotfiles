@@ -371,3 +371,15 @@ function protonvpn-fix() {
 	printf "Look for pvpn* and use \"sudo nmcli connection delete pvpn*\"\n"
 	nmcli connection show --active
 }
+
+# List installed packages for the current system in chronological order
+# Use with > to write to a file
+function ls-apt() {
+	(
+		zcat $(ls -tr /var/log/apt/history.log*.gz)
+		cat /var/log/apt/history.log
+	) 2>/dev/null |
+		egrep '^(Start-Date:|Commandline:)' |
+		grep -v aptdaemon |
+		egrep '^Commandline:'
+}
