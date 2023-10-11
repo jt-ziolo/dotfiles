@@ -1,20 +1,45 @@
-# Import
-snippet ir import React
-	import React from 'react';
-
-snippet irh import React hooks
-	import { use$1 } from 'react';
-
-# Interface
 snippet pi props interface
-	export interface $1Props extends ComponentPropsWithoutRef<'div'> {
+	export interface $1Props {
+		id?: string;
 		className?: string;
 		children?: ReactNode;
 	};
 
-# FC
 snippet fc functional component
-	const $1: FC<$1Props> = ({ className, children }) => {
-		return <div className={className}>{children}</div>;
+	const $1: FC<$1Props> = ({ 
+		id, 
+		className, 
+		children 
+	}) => {
+		return (
+			<div id={id} className={className}>
+				<h1>Temp</h1>
+				{children}
+			</div>
+		);
 	};
 	export default $1;
+
+snippet cwc JSX component w/ children
+	<$1
+		$2
+	>
+		{/*child*/}
+	</$1>
+
+snippet sct JSX self-closing tag component
+	<$1 $2 />
+
+snippet sty JSX style
+	style={{
+		$1
+	}}
+
+snippet map JSX list mapping
+	{
+		$1.map((value, idx) => {
+			return (
+				$2
+			);
+		});
+	}

@@ -336,7 +336,7 @@ esac
 # pnpm end
 
 # flutter and dart
-export PATH="$PATH:$HOME/snap/flutter/common/flutter/bin"
+# export PATH="$PATH:$HOME/snap/flutter/common/flutter/bin"
 
 # dotnet
 export DOTNET_ROOT="/usr/lib/dotnet"
@@ -361,3 +361,13 @@ function kubectl() {
 
 # docker rootless
 export PATH=/usr/bin:$PATH
+
+# deno
+# export DENO_INSTALL="/home/jt/.deno"
+# export PATH="$DENO_INSTALL/bin:$PATH"
+
+# fix proton
+function protonvpn-fix() {
+	printf "Look for pvpn* and use \"sudo nmcli connection delete pvpn*\"\n"
+	nmcli connection show --active
+}
